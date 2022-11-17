@@ -1,0 +1,10 @@
+version = "Two"
+#use_small_heuristics="MAX"
+match_block_trailing_comma = true
+force_explicit_abi = false
+merge_derives = false
+ignore = [
+    "src/test",
+    "test",
+    "docs"
+]
