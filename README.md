@@ -45,6 +45,8 @@ fn main() {
 ```
 ## Development
 
+### Build from source
+
 TODO
 
 ## Todo list

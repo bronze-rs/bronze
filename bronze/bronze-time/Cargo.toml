@@ -9,4 +9,4 @@ edition = "2021"
 cron.workspace = true
 chrono.workspace = true
 anyhow.workspace = true
-bronze-utils = { path = "../bronze-utils" }
+bronze-utils = { version = "0.1.0", path = "../bronze-utils" }

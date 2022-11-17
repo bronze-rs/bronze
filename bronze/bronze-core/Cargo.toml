@@ -10,8 +10,8 @@ cron.workspace = true
 chrono.workspace = true
 futures.workspace = true
 
-bronze-utils = { path = "../bronze-utils" }
-bronze-time = { path = "../bronze-time" }
+bronze-utils = { version = "0.1.0", path = "../bronze-utils" }
+bronze-time = { version = "0.1.0", path = "../bronze-time" }
 
 tokio = { version = "1.21.2", features = ["full"] }
 cfg-if = "1.0"
