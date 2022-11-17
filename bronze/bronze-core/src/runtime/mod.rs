@@ -220,7 +220,7 @@ impl BronzeRuntime for ThreadRuntime {
     }
 }
 
-#[derive(Default, Builder, Debug, Clone)]
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(into))]
 pub struct RunnableMetadata {
     #[allow(dead_code)]
@@ -233,6 +233,46 @@ pub struct RunnableMetadata {
     pub(crate) maximum_parallelism: Option<u32>,
     #[allow(dead_code)]
     pub(crate) schedule: Option<ScheduleTimeHolder>,
+}
+
+impl Default for RunnableMetadata {
+    fn default() -> Self {
+        RunnableMetadataBuilder::default()
+            .id(None)
+            .name(None)
+            .maximum_run_times(None)
+            .maximum_parallelism(None)
+            .schedule(None)
+            .build()
+            .unwrap()
+    }
+}
+
+impl RunnableMetadata {
+    pub fn set_id(&mut self, id: u64) -> &mut Self {
+        self.id = Some(id);
+        self
+    }
+
+    pub fn set_name(&mut self, name: String) -> &mut Self {
+        self.name = Some(name);
+        self
+    }
+
+    pub fn set_maximum_run_times(&mut self, maximum_run_times: u64) -> &mut Self {
+        self.maximum_run_times = Some(maximum_run_times);
+        self
+    }
+
+    pub fn set_maximum_parallelism(&mut self, maximum_parallelism: u32) -> &mut Self {
+        self.maximum_parallelism = Some(maximum_parallelism);
+        self
+    }
+
+    pub fn set_schedule(&mut self, schedule: ScheduleTimeHolder) -> &mut Self {
+        self.schedule = Some(schedule);
+        self
+    }
 }
 
 pub type SafeMetadata = Arc<Mutex<RunnableMetadata>>;

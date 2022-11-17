@@ -1,6 +1,7 @@
 use crate::task::dag::{DepTaskNode, TaskNode, DAG};
 use crate::task::TryIntoTask;
 use bronze_utils::Result;
+use std::borrow::BorrowMut;
 use std::sync::{Arc, Mutex};
 
 #[derive(Default)]
@@ -25,23 +26,21 @@ impl DAGBuilder {
             self.roots.push(node);
         }
         let new_node = Some(Arc::new(Mutex::new(TaskNode::new(task.try_into_task()))));
-        // let new_node = Some(Arc::new(Mutex::new(TaskNode::new(task.into()))));
         self.curr_node = new_node;
         self
     }
 
-    pub fn set_name(self, name: &str) -> Self {
-        if let Some(ref node) = self.curr_node {
+    pub fn set_name(mut self, name: &str) -> Self {
+        let node = self.curr_node.take();
+        if let Some(node) = node {
             node.as_ref()
                 .lock()
                 .unwrap()
-                .task
-                .0
-                .as_ref()
-                .lock()
-                .unwrap()
-                .0
-                .set_name(name);
+                .borrow_mut()
+                .meta
+                .as_mut()
+                .map(|r| r.set_name(name.to_string()));
+            self.curr_node = Some(node);
         }
         self
     }

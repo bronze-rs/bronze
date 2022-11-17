@@ -1,5 +1,7 @@
 use crate::prelude::RuntimeJoinHandle;
-use crate::runtime::{BuildFromRunnable, Runnable, RunnableMetadataBuilder, SafeMetadata};
+use crate::runtime::{
+    BuildFromRunnable, Runnable, RunnableMetadata, RunnableMetadataBuilder, SafeMetadata,
+};
 use crate::task::{TaskInfo, TryIntoTask, WrappedTask};
 use bronze_time::prelude::ScheduleExpr;
 use bronze_time::schedule_time::ScheduleTimeHolder;
@@ -12,6 +14,7 @@ pub type TimeHoldType = Arc<Mutex<ScheduleTimeHolder>>;
 // #[derive(Debug)]
 pub struct TaskNode {
     pub(crate) task: TaskInfo,
+    pub(crate) meta: Option<RunnableMetadata>,
     pub(crate) parents: Vec<DepTaskNode>,
     pub(crate) children: Vec<DepTaskNode>,
 }
@@ -30,12 +33,6 @@ impl<T: TryIntoTask> From<T> for DAG {
         DAG::new(vec![new_node])
     }
 }
-//
-// impl<T: TryIntoTask> Runnable for T {
-//     fn run_async(&self) -> Self::Handle {
-//         todo!()
-//     }
-// }
 
 impl BuildFromRunnable for DAG {
     type Type = DAG;
@@ -50,6 +47,7 @@ impl TaskNode {
     pub fn new(task: TaskInfo) -> Self {
         TaskNode {
             task,
+            meta: Some(RunnableMetadata::default()),
             parents: vec![],
             children: vec![],
         }
@@ -127,19 +125,18 @@ impl DAG {
         let mut s = vec![];
         let f = |node: DepTaskNode, level| {
             for _ in 0..level {
-                s.push(String::from(" "));
+                s.push(String::from("  "));
             }
             s.push(
                 node.as_ref()
                     .lock()
                     .unwrap()
-                    .task
-                    .0
+                    .meta
                     .as_ref()
-                    .lock()
                     .unwrap()
-                    .0
-                    .name(),
+                    .name
+                    .as_ref()
+                    .map_or_else(|| "".to_string(), |r| r.to_string()),
             );
             s.push("\n".to_string());
         };

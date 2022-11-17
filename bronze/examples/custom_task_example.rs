@@ -1,4 +1,4 @@
-use bronze_core::prelude::*;
+use bronze::prelude::*;
 
 fn main() {
     let mut s = SessionBuilder::default().build().unwrap();
