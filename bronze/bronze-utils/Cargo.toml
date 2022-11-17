@@ -8,5 +8,4 @@ edition = "2021"
 [dependencies]
 cron.workspace = true
 chrono.workspace = true
-#rayon.workspace = true
 anyhow.workspace = true

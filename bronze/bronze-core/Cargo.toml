@@ -8,16 +8,10 @@ edition = "2021"
 [dependencies]
 cron.workspace = true
 chrono.workspace = true
-#once_cell.workspace = true
-#rayon.workspace = true
 futures.workspace = true
 
 bronze-utils = { path = "../bronze-utils" }
 bronze-time = { path = "../bronze-time" }
-
-#derive_builder = "0.11.2"
-#typed-builder = "0.11.0"
-#buildstructor = "0.5.1"
 
 tokio = { version = "1.21.2", features = ["full"] }
 cfg-if = "1.0"
@@ -25,10 +19,6 @@ derive_builder = "0.11.2"
 
 [dev-dependencies]
 criterion = "0.3"
-
-#[[bench]]
-#name = "my_benchmark"
-#harness = false
 
 [features]
 default = ["async", "async_tokio"]
