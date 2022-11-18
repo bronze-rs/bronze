@@ -1,3 +1,4 @@
+# Most from https://github.com/pola-rs/polars/blob/master/.github/release-drafter.yml, thank polars~~
 categories:
   - title: 🏆 Highlights
     labels: highlight
@@ -26,6 +27,50 @@ replacers:
   # Remove conventional commits from titles
   - search: '/- (build|chore|ci|docs|feat|fix|perf|refactor|release|revert|style|test)(\(.*\))?(\!)?\: /g'
     replace: '- '
+
+autolabeler:
+  - label: rust
+    title:
+      - '/^(build|chore|ci|docs|feat|fix|perf|refactor|release|revert|style|test)\(.*rust.*\)/'
+  - label: breaking
+    title:
+      - '/^(build|chore|ci|docs|feat|fix|perf|refactor|release|revert|style|test)(\(.*\))?\!\: /'
+  - label: build
+    title:
+      - '/^build/'
+  - label: chore
+    title:
+      - '/^chore/'
+  - label: ci
+    title:
+      - '/^ci/'
+  - label: docs
+    title:
+      - '/^docs/'
+  - label: enhancement
+    title:
+      - '/^feat/'
+  - label: fix
+    title:
+      - '/^fix/'
+  - label: performance
+    title:
+      - '/^perf/'
+  - label: refactor
+    title:
+      - '/^refactor/'
+  - label: release
+    title:
+      - '/^release/'
+  - label: revert
+    title:
+      - '/^revert/'
+  - label: style
+    title:
+      - '/^style/'
+  - label: test
+    title:
+      - '/^test/'
 
 template: |
   $CHANGES
