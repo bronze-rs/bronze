@@ -1,7 +1,11 @@
 [package]
 name = "bronzeflow-core"
-version = "0.1.0"
+version.workspace = true
+authors = ["fangyinc <staneyffer@gmail.com>"]
 edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/bronze-rs/bronze"
+description = "Core of bronzeflow"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

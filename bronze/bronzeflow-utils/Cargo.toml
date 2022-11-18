@@ -1,11 +1,13 @@
 [package]
 name = "bronzeflow-utils"
-version = "0.1.0"
+version.workspace = true
+authors = ["fangyinc <staneyffer@gmail.com>"]
 edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/bronze-rs/bronze"
+description = "bronzeflow-utils: Some common util for bronzeflow(internal dependency)"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cron.workspace = true
-chrono.workspace = true
 anyhow.workspace = true

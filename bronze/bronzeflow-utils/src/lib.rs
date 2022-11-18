@@ -1,6 +1,6 @@
-//! # bronzeflow-utils: Some common util for bronze
+//! # bronzeflow-utils: Some common util for bronzeflow
 //!
-//! This is a temporary internal dependency for bronze
+//! This is a temporary internal dependency for bronzeflow
 
 mod log;
 pub mod prelude;

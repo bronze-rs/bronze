@@ -1,5 +1,5 @@
 #![feature(assert_matches)]
-//! # Bronze-Time: a common internal time crate for bronze
+//! # Bronzeflow-Time: a common internal time crate for bronzeflow
 // #![deny(missing_docs)]
 
 pub mod prelude;
