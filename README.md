@@ -63,8 +63,3 @@ TODO
 - [ ] Add "exactly once" execute semantics.
 - [ ] Add uniform common storage support which will used by other storage plugin, like database, zk etc.
 - [ ] Add database storage.
-
-### Unit test
-
-- [x] ```bronze-time/schedule_time.rs``` need full unit test
-- [x] ```bronze-core/runtime/mod.rs```

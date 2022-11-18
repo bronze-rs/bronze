@@ -13,5 +13,14 @@ clippy:
 	cargo clippy --all-targets --all-features --tests --benches -- -D warnings
 
 publish:
-	cargo publish --allow-dirty -p polars-arrow
+	cargo publish --allow-dirty --registry crates-io -p bronzeflow-utils
+	sleep 20
+
+	cargo publish --allow-dirty --registry crates-io -p bronzeflow-time
+	sleep 20
+
+	cargo publish --allow-dirty --registry crates-io -p bronzeflow-core
+	sleep 20
+
+	cargo publish --allow-dirty --registry crates-io -p bronzeflow
 	sleep 20
