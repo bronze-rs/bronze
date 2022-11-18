@@ -13,7 +13,7 @@ pub use crate::task::TaskInfo;
 pub use crate::store::StorageType;
 pub use crate::trigger::{ThreadTrigger, Trigger, TriggerCaller, TriggerCallerType};
 
-pub use bronze_time::prelude::*;
+pub use bronzeflow_time::prelude::*;
 
 #[cfg(feature = "async_tokio")]
 pub use crate::bronze_async::tokio_prelude::*;

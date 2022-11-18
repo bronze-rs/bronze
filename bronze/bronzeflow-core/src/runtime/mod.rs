@@ -22,7 +22,7 @@ use std::thread;
 #[cfg(feature = "async")]
 use futures::executor as executor_executor;
 
-use bronze_time::schedule_time::ScheduleTimeHolder;
+use bronzeflow_time::schedule_time::ScheduleTimeHolder;
 #[cfg(feature = "async_tokio")]
 use tokio;
 #[cfg(feature = "async_tokio")]
@@ -280,7 +280,7 @@ pub type SafeMetadata = Arc<Mutex<RunnableMetadata>>;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use bronze_utils::info;
+    use bronzeflow_utils::info;
 
     #[cfg(feature = "async")]
     #[test]

@@ -1,4 +1,4 @@
-//! # bronze-utils: Some common util for bronze
+//! # bronzeflow-utils: Some common util for bronze
 //!
 //! This is a temporary internal dependency for bronze
 

@@ -1,5 +1,5 @@
 [package]
-name = "bronze-utils"
+name = "bronzeflow-time"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +9,4 @@ edition = "2021"
 cron.workspace = true
 chrono.workspace = true
 anyhow.workspace = true
+bronzeflow-utils = { version = "0.1.0", path = "../bronzeflow-utils" }

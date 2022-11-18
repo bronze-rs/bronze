@@ -1,5 +1,5 @@
 [package]
-name = "bronze-core"
+name = "bronzeflow-core"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,8 +10,8 @@ cron.workspace = true
 chrono.workspace = true
 futures.workspace = true
 
-bronze-utils = { version = "0.1.0", path = "../bronze-utils" }
-bronze-time = { version = "0.1.0", path = "../bronze-time" }
+bronzeflow-utils = { version = "0.1.0", path = "../bronzeflow-utils" }
+bronzeflow-time = { version = "0.1.0", path = "../bronzeflow-time" }
 
 tokio = { version = "1.21.2", features = ["full"] }
 cfg-if = "1.0"

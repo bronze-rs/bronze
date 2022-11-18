@@ -1,7 +1,7 @@
-use bronze::prelude::*;
+use bronzeflow::prelude::*;
 
 fn main() {
-    // Create an session to submit task/workflow to scheduler
+    // Create a session to submit task/workflow to scheduler
     let mut s = SessionBuilder::default().build().unwrap();
 
     // Create a workflow

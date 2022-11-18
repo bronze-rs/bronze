@@ -11,10 +11,10 @@ TODO
 1. Create workflow by macro ```dag``` and submit to scheduler with cron expression
 
 ```rust
-use bronze::prelude::*;
+use bronzeflow::prelude::*;
 
 fn main() {
-    // Create an session to submit task/workflow to scheduler
+    // Create a session to submit task/workflow to scheduler
     let mut s = SessionBuilder::default().build().unwrap();
 
     // Create a workflow
@@ -29,8 +29,8 @@ fn main() {
             )
         )
     )
-        .build()
-        .unwrap();
+    .build()
+    .unwrap();
 
     // Print the dependencies tree
     wf.print_tree();
@@ -41,7 +41,6 @@ fn main() {
     // Sleep 5 seconds
     std::thread::sleep(std::time::Duration::from_secs(5));
 }
-
 ```
 ## Development
 
@@ -55,6 +54,7 @@ TODO
 
 - [x] Add executor plugin system for dag and task.
 - [x] Support async function and routine.
+- [ ] Use github CI/CD
 - [ ] Save and load task from dynamic link libraries(ffi)
 - [ ] Optimization task design for better expansion
 - [ ] Multi-language support.

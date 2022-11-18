@@ -1,9 +1,9 @@
 [workspace]
 members = [
     "bronze",
-    "bronze/bronze-utils",
-    "bronze/bronze-time",
-    "bronze/bronze-core"
+    "bronze/bronzeflow-utils",
+    "bronze/bronzeflow-time",
+    "bronze/bronzeflow-core"
 ]
 
 [workspace.package]

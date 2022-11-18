@@ -5,7 +5,7 @@
 //! TokioRuntime design to use tokio in a synchronous environment
 
 use crate::runtime::{BronzeRuntime, Runnable, RuntimeJoinHandle};
-use bronze_utils::{debug, info, BronzeError};
+use bronzeflow_utils::{debug, info, BronzeError};
 use std::sync::Arc;
 use std::thread::Builder as StdThreadBuilder;
 use tokio::runtime::{Builder, Runtime as TokioRawRuntime};
