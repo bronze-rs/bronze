@@ -46,7 +46,7 @@ pub(crate) trait NotFnRunnable {}
 #[cfg(feature = "async")]
 #[derive(Debug, Clone)]
 pub struct AsyncFn<F: Fn() -> U + Send + Clone + 'static, U: std::future::Future + Send + 'static>(
-    pub(crate) F,
+    pub F,
 );
 
 #[derive(Debug, Clone)]
