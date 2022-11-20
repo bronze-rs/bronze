@@ -56,6 +56,18 @@ impl TaskNode {
     pub fn run(&mut self) {
         self.task.0.as_ref().lock().unwrap().0.run();
     }
+
+    pub fn with_meta<T>(meta: T, task: TaskInfo) -> Self
+    where
+        T: Into<RunnableMetadata>,
+    {
+        TaskNode {
+            task,
+            meta: Some(meta.into()),
+            parents: vec![],
+            children: vec![],
+        }
+    }
 }
 
 unsafe impl Send for TaskNode {}
@@ -143,6 +155,14 @@ impl DAG {
         self.handle_with_level(f);
         let tree_str = s.join("");
         println!("{}", tree_str);
+    }
+
+    // TODO
+    pub fn print_in_one_tree(&self) {
+        let mut vnode = TaskNode::new(TryIntoTask::try_into_task(|| println!("root")));
+        for node in &self.root_tasks {
+            vnode.children.push(node.clone());
+        }
     }
 
     pub fn handle<F>(parent: bool, node: DepTaskNode, mut f: F)
