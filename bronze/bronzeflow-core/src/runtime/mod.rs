@@ -275,6 +275,14 @@ impl RunnableMetadata {
     }
 }
 
+impl From<&str> for RunnableMetadata {
+    fn from(value: &str) -> Self {
+        let mut m = RunnableMetadata::default();
+        m.set_name(value.to_string());
+        m
+    }
+}
+
 pub type SafeMetadata = Arc<Mutex<RunnableMetadata>>;
 
 #[cfg(test)]
