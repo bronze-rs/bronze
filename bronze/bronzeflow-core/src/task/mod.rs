@@ -1,7 +1,6 @@
 pub mod builder;
 pub mod dag;
 
-#[cfg(feature = "async")]
 use crate::prelude::{Runnable, RuntimeJoinHandle};
 use std::sync::{Arc, Mutex};
 
