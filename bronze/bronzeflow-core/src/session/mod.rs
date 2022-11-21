@@ -1,7 +1,6 @@
 use crate::executor::DefaultExecutor;
 use crate::manager::ScheduleManager;
-use crate::prelude::{Executor, RuntimeJoinHandle, ThreadTrigger, Trigger, DAG};
-use crate::runtime::{BuildFromRunnable, Runnable};
+use crate::prelude::{Executor, ThreadTrigger, Trigger, DAG};
 use crate::service::Service;
 use crate::store::{MemoryStorage, Storage};
 use crate::task::RunnableHolder;
@@ -29,19 +28,6 @@ pub trait Session: Service {
             RunnableHolder::Dag(dag)
         };
         self.submit_runnable(runnable)
-    }
-
-    fn submit_new<S>(
-        &mut self,
-        s: S,
-        runnable: impl Runnable<Handle = RuntimeJoinHandle<()>> + Send + 'static,
-    ) -> Result<()>
-    where
-        S: TryInto<ScheduleExpr>,
-        BronzeError: From<S::Error>,
-    {
-        let dag: DAG = DAG::build_from(runnable);
-        self.submit(s, dag)
     }
 
     fn submit_runnable(&mut self, runnable: RunnableHolder) -> Result<()>;
@@ -403,5 +389,31 @@ mod tests {
             MemoryStorage::new(),
             DefaultExecutor::default(),
         );
+    }
+
+    #[test]
+    fn submit_sync_fn() {
+        let mut s = SessionBuilder::default().build().unwrap();
+        s.submit("1/1 * * * * *", || println!("I am sync function"))
+            .unwrap();
+        thread::sleep(time::Duration::from_secs(2));
+    }
+
+    #[cfg(feature = "async_tokio")]
+    #[tokio::test]
+    async fn run_async_unction() {
+        use std::sync::Arc;
+        let tokio_rt = Arc::new(TokioRuntime::new());
+        let mut s = SessionBuilder::local()
+            .trigger(TokioTrigger::new(Arc::clone(&tokio_rt)))
+            .storage(MemoryStorage::new())
+            .executor(TokioExecutor::new(tokio_rt))
+            .build()
+            .unwrap();
+        s.submit(
+            "1/1 * * * * *",
+            AsyncFn(|| async { println!("I am asynchronous task") }),
+        )
+        .unwrap();
     }
 }

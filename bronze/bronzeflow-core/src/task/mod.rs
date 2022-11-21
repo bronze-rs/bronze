@@ -2,8 +2,7 @@ pub mod builder;
 pub mod dag;
 
 #[cfg(feature = "async")]
-use crate::prelude::AsyncFn;
-use crate::prelude::{Runnable, RuntimeJoinHandle, SyncFn};
+use crate::prelude::{Runnable, RuntimeJoinHandle};
 use std::sync::{Arc, Mutex};
 
 use crate::runtime::{BuildFromRunnable, SafeMetadata, SafeWrappedRunner, WrappedRunner};
@@ -51,50 +50,47 @@ pub trait TryIntoTask {
 
     fn try_into_task(self) -> TaskInfo;
 }
-
-impl<F: Fn() + Send + 'static + Clone> TryIntoTask for SyncFn<F> {
-    type TaskDetail = WrappedRunner;
-
-    fn try_into_task(self) -> TaskInfo {
-        SafeWrappedRunner(Arc::new(Mutex::new(WrappedRunner(Box::new(SyncFn(
-            self.0,
-        ))))))
-    }
-}
-
-#[cfg(feature = "async")]
-impl<F: Fn() -> U + Send + Clone + 'static, U: std::future::Future + Send + 'static> TryIntoTask
-    for AsyncFn<F, U>
-{
-    type TaskDetail = WrappedRunner;
-
-    fn try_into_task(self) -> TaskInfo {
-        SafeWrappedRunner(Arc::new(Mutex::new(WrappedRunner(Box::new(AsyncFn(
-            self.0,
-        ))))))
-    }
-}
-
-impl<F: Fn() + Send + 'static + Clone> TryIntoTask for F {
-    type TaskDetail = WrappedRunner;
-
-    fn try_into_task(self) -> TaskInfo {
-        TryIntoTask::try_into_task(SyncFn(self))
-    }
-}
-
-// impl<F: Fn() + Send + 'static + Clone> ! NotFnRunnable for F {}
 //
+// impl<F: Fn() + Send + 'static + Clone> TryIntoTask for SyncFn<F> {
+//     type TaskDetail = WrappedRunner;
 //
-// impl<F> TryIntoTask for F
-//     where
-//         F: Runnable<Handle=RuntimeJoinHandle<()>> + Send + NotFnRunnable
+//     fn try_into_task(self) -> TaskInfo {
+//         SafeWrappedRunner(Arc::new(Mutex::new(WrappedRunner(Box::new(SyncFn(
+//             self.0,
+//         ))))))
+//     }
+// }
+//
+// #[cfg(feature = "async")]
+// impl<F: Fn() -> U + Send + Clone + 'static, U: std::future::Future + Send + 'static> TryIntoTask
+//     for AsyncFn<F, U>
 // {
 //     type TaskDetail = WrappedRunner;
 //
 //     fn try_into_task(self) -> TaskInfo {
-//         SafeWrappedRunner(Arc::new(Mutex::new(
-//             WrappedRunner(Box::new(self))
-//         )))
+//         SafeWrappedRunner(Arc::new(Mutex::new(WrappedRunner(Box::new(AsyncFn(
+//             self.0,
+//         ))))))
 //     }
 // }
+//
+// impl<F: Fn() + Send + 'static + Clone> TryIntoTask for F {
+//     type TaskDetail = WrappedRunner;
+//
+//     fn try_into_task(self) -> TaskInfo {
+//         TryIntoTask::try_into_task(SyncFn(self))
+//     }
+// }
+
+// impl<F: Fn() + Send + 'static + Clone> ! NotFnRunnable for F {}
+
+impl<F> TryIntoTask for F
+where
+    F: Runnable<Handle = RuntimeJoinHandle<()>> + Send,
+{
+    type TaskDetail = WrappedRunner;
+
+    fn try_into_task(self) -> TaskInfo {
+        SafeWrappedRunner(Arc::new(Mutex::new(WrappedRunner(Box::new(self)))))
+    }
+}
