@@ -16,7 +16,7 @@ pub struct MyCustomTask {}
 
 impl Runnable for MyCustomTask {
     fn run_async(&self) -> Self::Handle {
-        println!("My custom task");
+        println!("My custom task, {:?}", self.run_type_id());
         RuntimeJoinHandle::SyncJobHandle
     }
 }

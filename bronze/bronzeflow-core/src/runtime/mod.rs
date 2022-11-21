@@ -14,6 +14,7 @@
 #[cfg(feature = "async_tokio")]
 pub mod tokio_runtime;
 
+use std::any::{type_name, TypeId};
 use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -72,7 +73,13 @@ impl<F: Fn() + Send + 'static + Clone> From<F> for SyncFn<F> {
 
 // impl<F: Fn() + Send + 'static + Clone> !NotFnRunnable for F{}
 
-pub trait Runnable {
+// pub trait RunnableType {
+//     fn get_type_name(&self) -> &str {
+//         type_name::<Self>()
+//     }
+// }
+
+pub trait Runnable: 'static {
     type Handle = RuntimeJoinHandle<()>;
 
     // TODO remove name
@@ -97,6 +104,16 @@ pub trait Runnable {
 
     fn metadata(&self) -> Option<RunnableMetadata> {
         None
+    }
+
+    #[inline(always)]
+    fn run_type_name(&self) -> String {
+        type_name::<Self>().to_string()
+    }
+
+    #[inline(always)]
+    fn run_type_id(&self) -> TypeId {
+        TypeId::of::<Self>()
     }
 }
 
@@ -180,6 +197,16 @@ impl Runnable for WrappedRunner {
     fn run_async(&self) -> Self::Handle {
         self.0.run_async()
     }
+
+    #[inline(always)]
+    fn run_type_name(&self) -> String {
+        self.0.run_type_name()
+    }
+
+    #[inline(always)]
+    fn run_type_id(&self) -> TypeId {
+        self.0.run_type_id()
+    }
 }
 
 impl Runnable for SafeWrappedRunner {
@@ -188,6 +215,16 @@ impl Runnable for SafeWrappedRunner {
     #[inline(always)]
     fn run_async(&self) -> Self::Handle {
         self.0.lock().unwrap().0.run_async()
+    }
+
+    #[inline(always)]
+    fn run_type_name(&self) -> String {
+        // self.0.as_ref().lock().unwrap().type_name()
+        self.0.lock().unwrap().0.run_type_name()
+    }
+    #[inline(always)]
+    fn run_type_id(&self) -> TypeId {
+        self.0.lock().unwrap().0.run_type_id()
     }
 }
 
@@ -290,7 +327,7 @@ pub type SafeMetadata = Arc<Mutex<RunnableMetadata>>;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use bronzeflow_utils::info;
+    use bronzeflow_utils::{debug, info};
 
     #[cfg(feature = "async")]
     #[test]
@@ -428,7 +465,7 @@ mod tests {
     }
 
     #[test]
-    fn test_custom_runnable() {
+    fn custom_runnable() {
         struct CustomRunnable {}
         impl CustomRunnable {
             pub fn new() -> Self {
@@ -446,5 +483,13 @@ mod tests {
             CustomRunnable::new(),
         )))));
         test_basic_runnable(s, false, false, check_run_result);
+    }
+
+    #[test]
+    fn type_name_type_id() {
+        let r1 = SyncFn(|| println!("runnable"));
+        let name = r1.run_type_name();
+        let id = r1.run_type_id();
+        debug!("type name: {}, type id: {:?}", name, id);
     }
 }

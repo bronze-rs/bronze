@@ -3,6 +3,7 @@ pub mod tokio_executor;
 
 use crate::prelude::{BronzeRuntime, TriggerCaller};
 use crate::runtime::{Runnable, ThreadRuntime};
+use bronzeflow_utils::debug;
 
 pub trait Executor: TriggerCaller {
     fn submit(&self, runnable: &mut impl Runnable, report_msg: bool);
@@ -31,6 +32,11 @@ impl<T: Executor> TriggerCaller for T {
     #[inline(always)]
     fn trigger(&self, runnable: &mut impl Runnable, report_msg: bool) {
         self.check_async_support(runnable);
+        debug!(
+            "Begin run {}, {:?}",
+            runnable.run_type_name(),
+            runnable.run_type_id()
+        );
         self.submit(runnable, report_msg);
     }
 
@@ -39,6 +45,11 @@ impl<T: Executor> TriggerCaller for T {
     where
         F: Runnable + Send + Sync + 'static,
     {
+        debug!(
+            "Begin run {}, {:?}",
+            runnable.run_type_name(),
+            runnable.run_type_id()
+        );
         self.check_async_support(&runnable);
         self.submit_safe(runnable, report_msg);
     }
