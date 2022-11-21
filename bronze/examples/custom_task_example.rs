@@ -3,11 +3,9 @@ use std::time::Duration;
 
 fn main() {
     let mut s = SessionBuilder::default().build().unwrap();
-    s.submit_new("1/2 * * * * *", SyncFn(|| println!("hello")))
+    s.submit("1/2 * * * * *", SyncFn(|| println!("hello")))
         .unwrap();
-    s.submit_new("1/2 * * * * *", MyCustomTask::default())
-        .unwrap();
-    // s.submit("", WrappedRunner(Box::new(MyCustomTask::new()))).unwrap();
+    s.submit("1/2 * * * * *", MyCustomTask::default()).unwrap();
     std::thread::sleep(Duration::from_secs(3));
 }
 

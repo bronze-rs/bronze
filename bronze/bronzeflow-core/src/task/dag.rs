@@ -1,4 +1,4 @@
-use crate::prelude::RuntimeJoinHandle;
+use crate::prelude::{RuntimeJoinHandle, SyncFn};
 use crate::runtime::{
     BuildFromRunnable, Runnable, RunnableMetadata, RunnableMetadataBuilder, SafeMetadata,
 };
@@ -159,7 +159,7 @@ impl DAG {
 
     // TODO
     pub fn print_in_one_tree(&self) {
-        let mut vnode = TaskNode::new(TryIntoTask::try_into_task(|| println!("root")));
+        let mut vnode = TaskNode::new(TryIntoTask::try_into_task(SyncFn(|| println!("root"))));
         for node in &self.root_tasks {
             vnode.children.push(node.clone());
         }

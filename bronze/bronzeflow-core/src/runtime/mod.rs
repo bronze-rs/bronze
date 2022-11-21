@@ -115,8 +115,16 @@ pub trait Runnable: 'static {
     fn run_type_id(&self) -> TypeId {
         TypeId::of::<Self>()
     }
+    //
+    // #[inline(always)]
+    // fn to_safe_wrapper(self) -> SafeWrappedRunner {
+    //     SafeWrappedRunner(Arc::new(Mutex::new(
+    //         WrappedRunner(Box::new(self))
+    //     )))
+    // }
 }
 
+// TODO delete this
 pub trait BuildFromRunnable {
     type Type;
     fn build_from(
@@ -171,6 +179,13 @@ impl<F: Fn() -> U + Send + Clone + 'static, U: std::future::Future + Send + 'sta
         true
     }
 }
+// Can`t do this, see: https://stackoverflow.com/questions/73782573/why-do-blanket-implementations-for-two-different-traits-conflict
+// #[cfg(feature = "async")]
+// impl<F: Fn(i32) -> U + Send + Clone + 'static, U: std::future::Future + Send + 'static> Runnable for F {
+//     fn run_async(&self) -> Self::Handle {
+//         run_async(&self)
+//     }
+// }
 
 impl<F: Fn() + Send + 'static + Clone> Runnable for SyncFn<F> {
     type Handle = RuntimeJoinHandle<()>;
@@ -182,11 +197,17 @@ impl<F: Fn() + Send + 'static + Clone> Runnable for SyncFn<F> {
     }
 }
 
+impl<F: Fn() + Send + 'static + Clone> Runnable for F {
+    fn run_async(&self) -> Self::Handle {
+        self();
+        RuntimeJoinHandle::SyncJobHandle
+    }
+}
+
 pub type RunnerType = Box<dyn Runnable<Handle = RuntimeJoinHandle<()>> + 'static + Send>;
 
 pub struct WrappedRunner(pub RunnerType);
 
-// pub type SafeWrappedRunner = Arc<Mutex<WrappedRunner>>;
 #[derive(Clone)]
 pub struct SafeWrappedRunner(pub(crate) Arc<Mutex<WrappedRunner>>);
 
