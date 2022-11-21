@@ -124,7 +124,7 @@ mod tests {
         StdThreadBuilder::new()
             .name("event_handle".into())
             .spawn(move || {
-                tokio::spawn({
+                futures::executor::block_on({
                     async move {
                         event_loop.run_loop().await;
                     }
