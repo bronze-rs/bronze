@@ -11,5 +11,10 @@ description = "Bronze: A workflow scheduler in rust"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["async", "async_tokio"]
+async = ["bronzeflow-core/async"]
+async_tokio = ["bronzeflow-core/async_tokio"]
+
 [dependencies]
-bronzeflow-core = { version = "0.1.0", path = "bronzeflow-core" }
+bronzeflow-core = { version = "0.1.0", path = "bronzeflow-core", default-features = false}

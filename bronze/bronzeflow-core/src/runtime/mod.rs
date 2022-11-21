@@ -112,17 +112,17 @@ where
     F: Fn() -> U + Send + Clone + 'static,
     U: std::future::Future + Send + 'static,
 {
-    // TODO check tokio feature
+    #[allow(unused_variables)]
     let f = runnable();
     cfg_if::cfg_if! {
-        if #[cfg(feature = "async_tokio")]  {
+        if #[cfg(feature = "async_tokio")] {
             let handle = tokio_spawn({
                 async {
                     f.await;
                 }
             });
             RuntimeJoinHandle::AsyncTokioJoinHandle(handle)
-        } else {
+        } else if #[cfg(feature = "async")] {
             // if not tokio, use `block_on`
             // just for dev
             let _output = executor_executor::block_on({
@@ -132,6 +132,8 @@ where
             });
             // TODO return data of real type
             RuntimeJoinHandle::FutureBlockJoinHandle(())
+        } else {
+            panic!("Not support run async");
         }
     }
 }
