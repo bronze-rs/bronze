@@ -13,4 +13,4 @@ description = "Bronzeflow-Time: a common internal time crate for bronzeflow(inte
 cron.workspace = true
 chrono.workspace = true
 anyhow.workspace = true
-bronzeflow-utils = { version = "0.1.0", path = "../bronzeflow-utils" }
+bronzeflow-utils = { version = "0.1.1", path = "../bronzeflow-utils" }

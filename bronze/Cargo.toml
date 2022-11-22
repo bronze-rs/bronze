@@ -1,6 +1,6 @@
 [package]
 name = "bronzeflow"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["fangyinc <staneyffer@gmail.com>"]
 edition = "2021"
 keywords = ["scheduler", "workflow"]
@@ -17,4 +17,4 @@ async = ["bronzeflow-core/async"]
 async_tokio = ["bronzeflow-core/async_tokio"]
 
 [dependencies]
-bronzeflow-core = { version = "0.1.0", path = "bronzeflow-core", default-features = false}
+bronzeflow-core = { version = "0.1.1", path = "bronzeflow-core", default-features = false}
