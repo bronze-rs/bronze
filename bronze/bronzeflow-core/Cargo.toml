@@ -14,8 +14,8 @@ cron.workspace = true
 chrono.workspace = true
 futures.workspace = true
 
-bronzeflow-utils = { version = "0.1.0", path = "../bronzeflow-utils" }
-bronzeflow-time = { version = "0.1.0", path = "../bronzeflow-time" }
+bronzeflow-utils = { version = "0.1.1", path = "../bronzeflow-utils" }
+bronzeflow-time = { version = "0.1.1", path = "../bronzeflow-time" }
 
 tokio = { version = "1.21.2", features = ["full"] }
 cfg-if = "1.0"

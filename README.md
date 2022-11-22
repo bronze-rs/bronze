@@ -54,7 +54,7 @@ TODO
 
 - [x] Add executor plugin system for dag and task.
 - [x] Support async function and routine.
-- [ ] Use github CI/CD
+- [x] Use github CI/CD
 - [ ] Save and load task from dynamic link libraries(ffi)
 - [ ] Optimization task design for better expansion
 - [ ] Multi-language support.
