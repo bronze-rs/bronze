@@ -47,7 +47,7 @@ pub trait TriggerCaller: Send {
     fn trigger_holder(&self, runnable: RunnableHolder, report_msg: bool) {
         match runnable {
             RunnableHolder::Task(task) => self.trigger_safe(task.task, report_msg),
-            RunnableHolder::Dag(dag) => dag.run_task(|task| {
+            RunnableHolder::Dag(dag) => dag.for_all_task(|task| {
                 let runner = task.as_ref().lock().unwrap().task.clone();
                 self.trigger_safe(runner, report_msg);
             }),
