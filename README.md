@@ -55,6 +55,8 @@ TODO
 - [x] Add executor plugin system for dag and task.
 - [x] Support async function and routine.
 - [x] Use github CI/CD
+- [ ] Add uniform message event loop to report task state
+- [ ] All tasks in DAG support sequential execution according to dependencies(topological sort)
 - [ ] Save and load task from dynamic link libraries(ffi)
 - [ ] Optimization task design for better expansion
 - [ ] Multi-language support.

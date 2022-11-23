@@ -3,12 +3,15 @@ use crate::service::Service;
 use crate::store::Storage;
 
 use crate::task::RunnableHolder;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 pub struct ScheduleManager<SG: Storage + 'static, TG: Trigger + 'static, E: Executor + 'static> {
     storage: StorageType<SG>,
     trigger: Arc<Mutex<TG>>,
     executor: Arc<Mutex<E>>,
+    dag_id: AtomicU64,
+    task_id: AtomicU64,
 }
 
 impl<SG: Storage, TG: Trigger, E: Executor> ScheduleManager<SG, TG, E> {
@@ -18,10 +21,36 @@ impl<SG: Storage, TG: Trigger, E: Executor> ScheduleManager<SG, TG, E> {
             storage: Arc::new(Mutex::new(storage)),
             executor: Arc::new(Mutex::new(executor)),
             trigger: Arc::new(Mutex::new(trigger)),
+            dag_id: AtomicU64::new(0),
+            task_id: AtomicU64::new(0),
         }
     }
 
-    pub fn add_runnable(&mut self, runnable: RunnableHolder) {
+    pub fn add_runnable(&mut self, mut runnable: RunnableHolder) {
+        match runnable {
+            RunnableHolder::Dag(ref mut dag) => {
+                // set dag id
+                if let Some(ref mut meta) = dag.meta {
+                    meta.lock()
+                        .unwrap()
+                        .set_id(self.dag_id.fetch_add(1, Ordering::Relaxed));
+                }
+                // set task id for all tasks in this dag
+                dag.for_all_task(|task| {
+                    if let Some(m) = task.as_ref().lock().unwrap().meta.as_mut() {
+                        m.set_id(self.task_id.fetch_add(1, Ordering::Relaxed));
+                    }
+                })
+            },
+            RunnableHolder::Task(ref mut t) => {
+                // set task id
+                if let Some(ref mut meta) = t.meta {
+                    meta.lock()
+                        .unwrap()
+                        .set_id(self.task_id.fetch_add(1, Ordering::Relaxed));
+                }
+            },
+        }
         self.storage.lock().unwrap().save_runnable(runnable)
     }
 

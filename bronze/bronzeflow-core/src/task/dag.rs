@@ -116,19 +116,19 @@ impl DAG {
     }
 
     pub fn run(&mut self) {
-        self.run_task(|t| {
+        self.for_all_task(|t| {
             t.as_ref().lock().unwrap().run();
         })
     }
 
-    pub fn run_task<F>(&self, runner: F)
+    pub fn for_all_task<F>(&self, f: F)
     where
         F: Fn(DepTaskNode),
     {
         for t in &self.root_tasks {
             DAG::handle(false, t.clone(), |task| {
                 // task.as_ref().lock().unwrap().run();
-                runner(task)
+                f(task)
             })
         }
     }
