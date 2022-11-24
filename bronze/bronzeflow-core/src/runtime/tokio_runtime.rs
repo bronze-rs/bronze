@@ -4,6 +4,8 @@
 //!
 //! TokioRuntime design to use tokio in a synchronous environment
 
+use crate::runtime::event_loop::TaskEvent::TaskPending;
+use crate::runtime::event_loop::{EventReceiver, EventSender, TaskEvent};
 use crate::runtime::{BronzeRuntime, Runnable, RuntimeJoinHandle};
 use bronzeflow_utils::{debug, info, BronzeError};
 use std::sync::Arc;
@@ -66,6 +68,10 @@ impl BronzeRuntime for TokioRuntime {
         panic!("Not supported in `TokioRuntime`, please use `run_safe`")
     }
 
+    fn run_with(&self, _: impl Runnable, _: bool, _: impl EventSender<TaskEvent> + 'static) {
+        panic!("Not supported in `TokioRuntime`, please use `run_safe`")
+    }
+
     #[inline(always)]
     fn run_safe<F>(&self, runnable: F, report_msg: bool)
     where
@@ -83,6 +89,75 @@ impl BronzeRuntime for TokioRuntime {
                 )))
                 .unwrap();
         }
+    }
+
+    fn run_safe_with<F>(&self, runnable: F, _: bool, sender: impl EventSender<TaskEvent> + 'static)
+    where
+        F: Runnable + Send + Sync + 'static,
+    {
+        let cs = sender.clone_new();
+        // TODO handle result
+        sender.send(TaskEvent::TaskPending).unwrap();
+        let handle = self.runtime.spawn({
+            async move {
+                // TODO handle result
+                cs.send(TaskPending).unwrap();
+                runnable.run_async();
+            }
+        });
+        // TODO handle result
+        sender
+            .send(TaskEvent::TaskRunning(
+                RuntimeJoinHandle::AsyncTokioJoinHandle(handle),
+            ))
+            .unwrap();
+    }
+}
+
+#[derive(Clone)]
+pub struct TokioEventSender<T> {
+    sender: mpsc::Sender<T>,
+}
+
+impl<T> TokioEventSender<T> {
+    pub fn new(sender: mpsc::Sender<T>) -> Self {
+        TokioEventSender { sender }
+    }
+}
+
+unsafe impl<T> Send for TokioEventSender<T> {}
+
+impl<T> EventSender<T> for TokioEventSender<T> {
+    type Sender<S> = ();
+
+    fn send(&self, value: T) -> bronzeflow_utils::Result<()> {
+        self.sender
+            .blocking_send(value)
+            .or(Err(BronzeError::msg("Send message failed")))
+    }
+
+    fn clone_new(&self) -> Self {
+        TokioEventSender {
+            sender: self.sender.clone(),
+        }
+    }
+}
+
+pub struct TokioEventReceiver<T> {
+    recv: mpsc::Receiver<T>,
+}
+
+impl<T> TokioEventReceiver<T> {
+    pub fn new(recv: mpsc::Receiver<T>) -> Self {
+        TokioEventReceiver { recv }
+    }
+}
+
+impl<T> EventReceiver<T> for TokioEventReceiver<T> {
+    type Receiver<R> = ();
+
+    fn recv(&mut self) -> Option<T> {
+        self.recv.blocking_recv()
     }
 }
 

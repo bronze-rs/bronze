@@ -11,6 +11,7 @@
 //!
 // TODO Add more examples to use the runnable and runtime
 
+pub mod event_loop;
 #[cfg(feature = "async_tokio")]
 pub mod tokio_runtime;
 
@@ -23,6 +24,7 @@ use std::thread;
 #[cfg(feature = "async")]
 use futures::executor as executor_executor;
 
+use crate::runtime::event_loop::{EventSender, TaskEvent};
 use bronzeflow_time::schedule_time::ScheduleTimeHolder;
 #[cfg(feature = "async_tokio")]
 use tokio;
@@ -252,11 +254,24 @@ impl Runnable for SafeWrappedRunner {
 pub trait BronzeRuntime {
     fn run(&self, runnable: impl Runnable, report_msg: bool);
 
+    fn run_with(&self, _: impl Runnable, _: bool, _: impl EventSender<TaskEvent> + 'static) {}
+
     fn run_safe<F>(&self, runnable: F, report_msg: bool)
     where
         F: Runnable + Send + Sync + 'static,
     {
         self.run(runnable, report_msg)
+    }
+
+    fn run_safe_with<F>(
+        &self,
+        runnable: F,
+        report_msg: bool,
+        sender: impl EventSender<TaskEvent> + 'static,
+    ) where
+        F: Runnable + Send + Sync + 'static,
+    {
+        self.run_with(runnable, report_msg, sender)
     }
 }
 
