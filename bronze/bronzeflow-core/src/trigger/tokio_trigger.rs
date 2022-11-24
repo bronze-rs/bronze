@@ -139,7 +139,7 @@ impl<TC: TriggerCaller + 'static> TriggerEventHandle<TC> {
                     self.trigger_caller
                         .lock()
                         .unwrap()
-                        .trigger_holder(dag, false)
+                        .trigger_holder(dag, true)
                     // self.trigger_caller.lock().unwrap().trigger(dag, false)
                 },
             }

@@ -359,6 +359,17 @@ mod tests {
         thread::sleep(time::Duration::from_secs(1));
     }
 
+    #[test]
+    fn session_with_thread() {
+        let mut s = SessionBuilder::default().build().unwrap();
+        let d = get_dag();
+        thread::spawn(move || {
+            s.submit("@daily", d).unwrap();
+        })
+        .join()
+        .unwrap();
+    }
+
     #[cfg(feature = "async_tokio")]
     #[tokio::test]
     async fn create_local_session_with_tokio_runtime() {

@@ -2,10 +2,14 @@
 pub mod tokio_executor;
 
 use crate::prelude::{BronzeRuntime, TriggerCaller};
+use crate::runtime::event_loop::{EventReceiver, EventSender, StdEventReceiver, StdEventSender};
 use crate::runtime::{Runnable, ThreadRuntime};
 use bronzeflow_utils::debug;
 
 pub trait Executor: TriggerCaller {
+    type Sender<T>: EventSender<T> = StdEventSender<T>;
+    type Receiver<T>: EventReceiver<T> = StdEventReceiver<T>;
+
     fn submit(&self, runnable: &mut impl Runnable, report_msg: bool);
 
     fn submit_safe<F>(&self, mut runnable: F, report_msg: bool)
@@ -25,6 +29,10 @@ pub trait Executor: TriggerCaller {
         if runnable.is_async() && !self.support_async() {
             panic!("Current executor not supported async runnable");
         }
+    }
+
+    fn create_channel<T>(_: usize) -> (Self::Sender<T>, Self::Receiver<T>) {
+        todo!()
     }
 }
 
